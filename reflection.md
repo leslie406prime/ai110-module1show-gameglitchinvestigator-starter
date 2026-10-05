@@ -39,6 +39,7 @@ Document at least 3 bugs you found. Add rows as needed.
 ## 4. What did you learn about Streamlit and state?
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+  - Streamlit re-runs the whole script from top to bottom every time you click a button or change an input. Normal variables get reset on each rerun, so the game would forget the secret number. `st.session_state` is a dictionary that survives reruns, so the secret, attempts, score and history live there. The `if "secret" not in st.session_state` checks make sure they are only set once, on the first run.
 
 ---
 
@@ -46,5 +47,8 @@ Document at least 3 bugs you found. Add rows as needed.
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+  - Writing a failing test first, then fixing the code until it passes, and then checking the same behavior in the running app.
 - What is one thing you would do differently next time you work with AI on a coding task?
+  - I would read each change before accepting it and ask the AI to explain why it made it. I let Claude Code do most of the work here, so I want to understand every line myself next time.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+  - AI generated code can look fine and still be wrong, such as the backwards hints and the string comparison. It is a fast teammate, but I still have to test and verify its work.
