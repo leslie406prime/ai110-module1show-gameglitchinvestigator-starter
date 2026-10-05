@@ -12,12 +12,28 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 Document at least 3 bugs you found. Add rows as needed.
 
-| Input | Expected Behavior | Actual Behavior | Console Output / Error |
-|-------|-------------------|-----------------|------------------------|
-| Guess 60, secret 50 | "Go LOWER!" | "Go HIGHER!" (hints backwards) | none |
-| Guess 9, secret 50, on an even attempt | "Go HIGHER!" | Compared as strings ("9" > "50"), wrong hint | none |
-| Press New Game / pick Easy | Range matches difficulty | Info text always says 1 to 100; New Game always uses 1-100 | none |
-| Win or lose, then press New Game | Fresh game starts | Status stays "won"/"lost", so the game stays stuck on "Game over"; score and history carry over | none |
+| Input | Expected Behavior | Actual Behavior | Code-level cause |
+|-------|-------------------|-----------------|------------------|
+| Guess 60, secret 50 (attempt 4) | "Go LOWER!" | "Go HIGHER!" (hints backwards) | `check_guess` returned the HIGHER message for "Too High" and the LOWER message for "Too Low" |
+| Guess 9, secret 50, on an even attempt (attempt 2) | Outcome "Too Low", score -5 | Outcome "Too High", score +5. The message happened to read "Go HIGHER!" only because the messages were also swapped, so the string bug was hidden | `app.py` passed `str(secret)` on even attempts, so `check_guess` hit its `TypeError` fallback and compared strings (`"9" > "50"`) |
+| Pick Easy (range 1-20), then press New Game | Info text says 1 to 20 and New Game draws from 1-20 | Info text says 1 to 100 and New Game drew 35 from 1-100 | The info text was hard-coded and New Game called `random.randint(1, 100)` instead of using `low, high` |
+| Win, then press New Game | A fresh game starts | Screen still says "You already won. Start a new game to play again." and the status stays "won" | The New Game handler reset `attempts` and `secret` but not `status`, `score` or `history` |
+
+**Terminal trace of the starter code** (also committed as [bug_trace.txt](bug_trace.txt)). I ran the starter `app.py` (commit `f651d72`) headless with Streamlit's `AppTest`:
+
+```
+Starter code (commit f651d72), run headless with Streamlit AppTest
+Run 1: secret forced to 50, Normal difficulty
+  attempt 2 (even): guess  9, secret 50 -> ['Go HIGHER!'], score 0 -> 5
+  attempt 3 (odd): guess  9, secret 50 -> ['Go LOWER!'], score 5 -> 0
+  attempt 4 (even): guess 60, secret 50 -> ['Go HIGHER!'], score 0 -> 5
+Run 2: Easy difficulty selected
+  sidebar: Range: 1 to 20 | main text: Guess a number between 1 and 100. Attempts left: 5
+  New Game secret: 35 (drawn from 1-100)
+Run 3: win, then click New Game
+  status after win: won
+  status after New Game: won | screen: ['You already won. Start a new game to play again.']
+```
 
 ---
 
