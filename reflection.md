@@ -32,7 +32,7 @@ Document at least 3 bugs you found. Add rows as needed.
 ## 3. Debugging and testing your fixes
 
 - **Deciding a bug was fixed:** a failing test turned green, then I confirmed the same behavior in the running app.
-- **Tests:** `pytest` runs 7 tests, all passing. `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher` cover the backwards hints. `test_numeric_comparison_not_string` covers the string bug. The three starter tests were fixed to unpack the `(outcome, message)` tuple. Streamlit's `AppTest` ran the app headless with secret 50: guesses 60, 9, 40 gave LOWER, HIGHER, HIGHER, with no exceptions.
+- **Tests:** `pytest` runs 15 tests, all passing. `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher` cover the backwards hints. `test_numeric_comparison_not_string` covers the string bug. The three starter tests were fixed to unpack the `(outcome, message)` tuple. Eight more cover `parse_guess` edge cases (negatives, decimals, huge and non-numeric input), and `parse_guess` now rejects out-of-range guesses. Streamlit's `AppTest` ran the app headless with secret 50: guesses 60, 9, 40 gave LOWER, HIGHER, HIGHER, with no exceptions.
 - **AI help:** Claude wrote the tests and spotted that the starter tests could never pass because of the tuple return.
 
 ---
