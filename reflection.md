@@ -17,6 +17,7 @@ Document at least 3 bugs you found. Add rows as needed.
 | Guess 60, secret 50 | "Go LOWER!" | "Go HIGHER!" (hints backwards) | none |
 | Guess 9, secret 50, on an even attempt | "Go HIGHER!" | Compared as strings ("9" > "50"), wrong hint | none |
 | Press New Game / pick Easy | Range matches difficulty | Info text always says 1 to 100; New Game always uses 1-100 | none |
+| Win or lose, then press New Game | Fresh game starts | Status stays "won"/"lost", so the game stays stuck on "Game over"; score and history carry over | none |
 
 ---
 
