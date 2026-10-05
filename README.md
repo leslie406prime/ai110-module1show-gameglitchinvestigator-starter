@@ -25,28 +25,46 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game purpose:** A Streamlit number-guessing game. The app picks a secret number in a range set by the difficulty (Easy 1-20, Normal 1-100, Hard 1-50). You guess within a limited number of attempts, get a Higher/Lower hint after each guess, and earn or lose points as you go.
+
+**Bugs found:**
+- The hints were backwards: a guess that was too high said "Go HIGHER!" and a guess that was too low said "Go LOWER!".
+- On even attempts the secret was cast to a string, so guesses were compared as text (`"9" > "50"`) and gave wrong hints.
+- The range was hard-coded to 1-100: the info text always said "1 and 100", and New Game ignored the difficulty.
+- New Game did not reset the status, score or history, so after a win or loss the game stayed stuck on "Game over".
+
+**Fixes applied:**
+- Moved the game logic (`get_range_for_difficulty`, `parse_guess`, `check_guess`, `update_score`) into `logic_utils.py`, and corrected the hint messages in `check_guess`.
+- Removed the `try/except TypeError` string fallback. `app.py` now always passes an int secret.
+- The info text and New Game now use the range for the chosen difficulty.
+- New Game resets the secret, status, score and history.
+- Added tests in `tests/test_game_logic.py` for the hints, the string comparison and the difficulty ranges. The three starter tests were also fixed to unpack the `(outcome, message)` tuple.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
+A sample game on Normal difficulty, where the secret number is 50:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
-
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+1. The player enters a guess of 40. The game shows "Go HIGHER!" and the score drops to -5.
+2. The player enters a guess of 70. The game shows "Go LOWER!" and the score drops to -10.
+3. The player enters a guess of 50. The game shows "You won! The secret was 50. Final score: 40" and the score rises to 40.
+4. Any further guess is blocked with "You already won. Start a new game to play again."
+5. The player clicks New Game. The status goes back to "playing", the score and history reset, and a new secret is picked from the difficulty's range.
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+$ python -m pytest tests/ -v
+collected 7 items
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [ 14%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 28%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 42%]
+tests/test_game_logic.py::test_too_high_hint_says_lower PASSED           [ 57%]
+tests/test_game_logic.py::test_too_low_hint_says_higher PASSED           [ 71%]
+tests/test_game_logic.py::test_numeric_comparison_not_string PASSED      [ 85%]
+tests/test_game_logic.py::test_range_matches_difficulty PASSED           [100%]
+
+============================== 7 passed in 0.08s ==============================
 ```
 
 ## 🚀 Stretch Features
