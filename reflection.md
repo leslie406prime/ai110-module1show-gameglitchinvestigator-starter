@@ -14,26 +14,25 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Guess 60, secret 50 | "Go LOWER!" | "Go HIGHER!" (hints backwards) | none |
+| Guess 9, secret 50, on an even attempt | "Go HIGHER!" | Compared as strings ("9" > "50"), wrong hint | none |
+| Press New Game / pick Easy | Range matches difficulty | Info text always says 1 to 100; New Game always uses 1-100 | none |
 
 ---
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
-- Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
-- Give one example of an AI suggestion you did not accept as written (including what the AI suggested, why you rejected or changed it, and how you verified your version). It does not have to be a suggestion that was wrong: over-engineered, out of scope, harder to read, or a poor fit for this codebase all count.
+- **Tool:** Claude Code (agent mode) in VS Code.
+- **Correct suggestion:** Claude pointed out that `app.py` cast the secret to `str` on even attempts, pushing `check_guess` into its `TypeError` fallback that compares strings. That was correct because `"9" > "50"` is True in Python. I verified it with a new test (`check_guess(9, 50)` returns "Too Low") and by running the app headless: on attempt 2 with secret 50, guessing 9 now says "Go HIGHER!".
+- **Suggestion I did not accept as written:** The existing `try/except TypeError` fallback in `check_guess` could have been patched to convert types safely. I removed it instead and made the caller always pass an int. A fallback that silently changes types hides bugs and is harder to read. I verified by re-running pytest (6 passed) and the headless app run. Also, the starter tests compared the whole `(outcome, message)` tuple to a string, so I changed them to unpack the outcome rather than change `check_guess`'s return shape.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+- **Deciding a bug was fixed:** a failing test turned green, then I confirmed the same behavior in the running app.
+- **Tests:** `pytest` runs 6 tests, all passing. `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher` cover the backwards hints. `test_numeric_comparison_not_string` covers the string bug. The three starter tests were fixed to unpack the `(outcome, message)` tuple. Streamlit's `AppTest` ran the app headless with secret 50: guesses 60, 9, 40 gave LOWER, HIGHER, HIGHER, with no exceptions.
+- **AI help:** Claude wrote the tests and spotted that the starter tests could never pass because of the tuple return.
 
 ---
 
