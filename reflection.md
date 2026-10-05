@@ -24,14 +24,14 @@ Document at least 3 bugs you found. Add rows as needed.
 
 - **Tool:** Claude Code (agent mode) in VS Code.
 - **Correct suggestion:** Claude pointed out that `app.py` cast the secret to `str` on even attempts, pushing `check_guess` into its `TypeError` fallback that compares strings. That was correct because `"9" > "50"` is True in Python. I verified it with a new test (`check_guess(9, 50)` returns "Too Low") and by running the app headless: on attempt 2 with secret 50, guessing 9 now says "Go HIGHER!".
-- **Suggestion I did not accept as written:** The existing `try/except TypeError` fallback in `check_guess` could have been patched to convert types safely. I removed it instead and made the caller always pass an int. A fallback that silently changes types hides bugs and is harder to read. I verified by re-running pytest (6 passed) and the headless app run. Also, the starter tests compared the whole `(outcome, message)` tuple to a string, so I changed them to unpack the outcome rather than change `check_guess`'s return shape.
+- **Suggestion I did not accept as written:** The existing `try/except TypeError` fallback in `check_guess` could have been patched to convert types safely. I removed it instead and made the caller always pass an int. A fallback that silently changes types hides bugs and is harder to read. I verified by re-running pytest (7 passed) and the headless app run. Also, the starter tests compared the whole `(outcome, message)` tuple to a string, so I changed them to unpack the outcome rather than change `check_guess`'s return shape.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
 - **Deciding a bug was fixed:** a failing test turned green, then I confirmed the same behavior in the running app.
-- **Tests:** `pytest` runs 6 tests, all passing. `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher` cover the backwards hints. `test_numeric_comparison_not_string` covers the string bug. The three starter tests were fixed to unpack the `(outcome, message)` tuple. Streamlit's `AppTest` ran the app headless with secret 50: guesses 60, 9, 40 gave LOWER, HIGHER, HIGHER, with no exceptions.
+- **Tests:** `pytest` runs 7 tests, all passing. `test_too_high_hint_says_lower` and `test_too_low_hint_says_higher` cover the backwards hints. `test_numeric_comparison_not_string` covers the string bug. The three starter tests were fixed to unpack the `(outcome, message)` tuple. Streamlit's `AppTest` ran the app headless with secret 50: guesses 60, 9, 40 gave LOWER, HIGHER, HIGHER, with no exceptions.
 - **AI help:** Claude wrote the tests and spotted that the starter tests could never pass because of the tuple return.
 
 ---

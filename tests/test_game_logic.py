@@ -1,4 +1,4 @@
-from logic_utils import check_guess
+from logic_utils import check_guess, get_range_for_difficulty
 
 def test_winning_guess():
     # If the secret is 50 and guess is 50, it should be a win
@@ -28,3 +28,9 @@ def test_numeric_comparison_not_string():
     # "9" > "50" as strings; as ints 9 is Too Low
     outcome, _ = check_guess(9, 50)
     assert outcome == "Too Low"
+
+
+def test_range_matches_difficulty():
+    assert get_range_for_difficulty("Easy") == (1, 20)
+    assert get_range_for_difficulty("Normal") == (1, 100)
+    assert get_range_for_difficulty("Hard") == (1, 50)
