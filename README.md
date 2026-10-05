@@ -38,7 +38,8 @@ It wrote the code, ran away, and now the game is unplayable.
 - Removed the `try/except TypeError` string fallback. `app.py` now always passes an int secret.
 - The info text and New Game now use the range for the chosen difficulty.
 - New Game resets the secret, status, score and history.
-- Added tests in `tests/test_game_logic.py` for the hints, the string comparison and the difficulty ranges. The three starter tests were also fixed to unpack the `(outcome, message)` tuple.
+- `parse_guess` now takes the difficulty range and rejects out-of-range guesses (negative, zero, too high, huge) with a clear message instead of counting them as real guesses.
+- Added tests in `tests/test_game_logic.py` for the hints, the string comparison, the difficulty ranges and edge-case inputs. The three starter tests were also fixed to unpack the `(outcome, message)` tuple.
 
 ## 📸 Demo Walkthrough
 
@@ -52,19 +53,26 @@ A sample game on Normal difficulty, where the secret number is 50:
 
 ## 🧪 Test Results
 
+Includes the Challenge 1 edge-case tests for `parse_guess` (negative, decimal, huge and non-numeric input).
+
 ```
 $ python -m pytest tests/ -v
-collected 7 items
-
-tests/test_game_logic.py::test_winning_guess PASSED                      [ 14%]
-tests/test_game_logic.py::test_guess_too_high PASSED                     [ 28%]
-tests/test_game_logic.py::test_guess_too_low PASSED                      [ 42%]
-tests/test_game_logic.py::test_too_high_hint_says_lower PASSED           [ 57%]
-tests/test_game_logic.py::test_too_low_hint_says_higher PASSED           [ 71%]
-tests/test_game_logic.py::test_numeric_comparison_not_string PASSED      [ 85%]
-tests/test_game_logic.py::test_range_matches_difficulty PASSED           [100%]
-
-============================== 7 passed in 0.08s ==============================
+tests/test_game_logic.py::test_winning_guess PASSED                      [  6%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 13%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 20%]
+tests/test_game_logic.py::test_too_high_hint_says_lower PASSED           [ 26%]
+tests/test_game_logic.py::test_too_low_hint_says_higher PASSED           [ 33%]
+tests/test_game_logic.py::test_numeric_comparison_not_string PASSED      [ 40%]
+tests/test_game_logic.py::test_range_matches_difficulty PASSED           [ 46%]
+tests/test_game_logic.py::test_negative_guess_rejected_when_out_of_range PASSED [ 53%]
+tests/test_game_logic.py::test_negative_guess_parses_without_range PASSED [ 60%]
+tests/test_game_logic.py::test_zero_and_above_high_rejected PASSED       [ 66%]
+tests/test_game_logic.py::test_decimal_guess_truncated_toward_zero PASSED [ 73%]
+tests/test_game_logic.py::test_huge_number_rejected_without_crashing PASSED [ 80%]
+tests/test_game_logic.py::test_non_numeric_and_special_inputs_do_not_crash PASSED [ 86%]
+tests/test_game_logic.py::test_blank_and_none_ask_for_a_guess PASSED     [ 93%]
+tests/test_game_logic.py::test_whitespace_around_number_is_accepted PASSED [100%]
+============================= 15 passed in 0.08s ==============================
 ```
 
 ## 🚀 Stretch Features
